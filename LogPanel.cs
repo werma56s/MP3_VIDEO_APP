@@ -36,64 +36,55 @@ namespace PlayerMP3AndVideo
 
 
         }
-        void Polacznie()
-        {
-            MySqlConnection polaczenie = new MySqlConnection("server=localhost; user=root; database=user");
-           
-            MySqlDataAdapter komenda = new MySqlDataAdapter("SELECT count(*) FROM user1 where Email='"+ EmailBox.Text + "'and Password='"+ PasswodBox.Text + "'",polaczenie);
-            DataTable dt = new DataTable();
-            komenda.Fill(dt);
-            if(dt.Rows[0][0].ToString() == "1")
-            {
-                MessageBox.Show("Login Succes", "Congrates", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                this.Hide();
-                MainPanel NewPanel = new MainPanel();
-                NewPanel.Show();
-            }
-            else
-            {
-                MessageBox.Show("Either your email or password is incorrect", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-
-        }
-
+            
         private void button1_Click(object sender, EventArgs e)
         {
-            Polacznie();
+            MySqlConnection polaczenie = new MySqlConnection("server=localhost; user=root; database=user");
+            MySqlCommand komenda = polaczenie.CreateCommand();
+            try 
+            {
+
+                if (polaczenie.State == ConnectionState.Closed)
+                {
+                    polaczenie.Open();
+                    komenda.CommandText = string.Format("SELECT count(id) FROM register where Email='{0}'and Haslo='{1}'", EmailBox.Text, PasswodBox.Text);
+                    MessageBox.Show("Zaloowałeś sie poprawinie", "Informacja", MessageBoxButtons.OK);
+                    this.Hide();
+                    MainPanel NewPanel = new MainPanel();
+                    NewPanel.Show();
+                }
+
+            }
+            catch(Exception ex)
+            {
+	            string byk = string.Format("Problem z polaczniem \n{0}", ex.Message);
+                MessageBox.Show(byk, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               
+            }
+            finally
+            {
+                if(polaczenie.State == ConnectionState.Open)
+                {
+                    polaczenie.Close();
+                }
+            }
+
+            
         }
 
-        private void EmailBox_Enter(object sender, EventArgs e)
+        private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            if (EmailBox.Text.Equals("Email"))
-            {
-                EmailBox.Text = "";
-            }
+
         }
 
-        private void EmailBox_Leave(object sender, EventArgs e)
+        private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            if (EmailBox.Text.Equals(""))
-            {
-                EmailBox.Text = "Email";
-            }
+
         }
 
-        private void PasswodBox_Enter(object sender, EventArgs e)
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if (PasswodBox.Text.Equals("Password"))
-            {
-                PasswodBox.Text = "";
-            }
-        }
 
-        private void PasswodBox_Leave(object sender, EventArgs e)
-        {
-            if (PasswodBox.Text.Equals(""))
-            {
-                PasswodBox.Text = "Password";
-            }
         }
     }
 }
