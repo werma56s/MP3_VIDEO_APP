@@ -54,7 +54,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(824, 563);
             this.panel1.TabIndex = 0;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // pictureBox1
             // 
@@ -79,7 +78,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(164, 48);
             this.button1.TabIndex = 3;
-            this.button1.Text = "Log in";
+            this.button1.Text = "Login";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -91,9 +90,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(342, 476);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(135, 24);
+            this.label1.Size = new System.Drawing.Size(144, 24);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Create accont!";
+            this.label1.Text = "Create account!";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // PasswodBox
@@ -105,7 +104,9 @@
             this.PasswodBox.Size = new System.Drawing.Size(212, 39);
             this.PasswodBox.TabIndex = 1;
             this.PasswodBox.Text = "Password";
-            this.PasswodBox.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
+            this.PasswodBox.UseSystemPasswordChar = true;
+            this.PasswodBox.Enter += new System.EventHandler(this.PasswodBox_Enter);
+            this.PasswodBox.Leave += new System.EventHandler(this.PasswodBox_Leave);
             // 
             // EmailBox
             // 
@@ -116,7 +117,8 @@
             this.EmailBox.Size = new System.Drawing.Size(212, 39);
             this.EmailBox.TabIndex = 0;
             this.EmailBox.Text = "Email";
-            this.EmailBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.EmailBox.Enter += new System.EventHandler(this.EmailBox_Enter);
+            this.EmailBox.Leave += new System.EventHandler(this.EmailBox_Leave);
             // 
             // LogPanel
             // 

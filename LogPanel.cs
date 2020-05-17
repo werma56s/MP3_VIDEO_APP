@@ -8,8 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
-using System.Data.SqlTypes;
-using System.Data.SqlClient;
+
 
 
 namespace PlayerMP3AndVideo
@@ -36,55 +35,86 @@ namespace PlayerMP3AndVideo
 
 
         }
-            
+        void Polacznie()
+        {
+            //Polacznie z lokalna baza danych
+            MySqlConnection polaczenie = new MySqlConnection("server=localhost; user=root; database=user");
+           //Stworznie komedy wyszykujacej email i haslo uzytkownika
+            MySqlDataAdapter komenda = new MySqlDataAdapter("SELECT count(*) FROM user1 where Email='"+ EmailBox.Text + "'and Password='"+ PasswodBox.Text + "'",polaczenie);
+            //Stworzenie nowego obiektu DataTable
+            DataTable dt = new DataTable();
+            //metody Fill pozwala załadować dane (z komedy) do obiektów DataTable
+            komenda.Fill(dt);
+            //if sprawdza czy zwraca dokladnie 1
+            if(dt.Rows[0][0].ToString() == "1")
+            {
+                //komunkiat o poprawnym zajeztreowniu uzytkownika
+                MessageBox.Show("Login Succes", "Congrates", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //przejscie do panelu uzytkownika
+                this.Hide();
+                MainPanel NewPanel = new MainPanel();
+                NewPanel.Show();
+            }
+            else
+            {
+                //Error gdy wpiszemy zle email lub haslo
+                MessageBox.Show("Either your email or password is incorrect", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //czysci pola tesktowe
+                EmailBox.Clear();
+                PasswodBox.Clear();
+            }
+
+            //jesli polaczenie jest otwarte, to zamnknij
+            if (polaczenie.State == ConnectionState.Open)
+            {
+                polaczenie.Close();
+            }
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            MySqlConnection polaczenie = new MySqlConnection("server=localhost; user=root; database=user");
-            MySqlCommand komenda = polaczenie.CreateCommand();
-            try 
+            //if ktory sprawdza czy pola(email, haslo) sa puste lib wartosic domyslne,
+            if (EmailBox.Text.Equals(" ") || EmailBox.Text.Equals("Email") || PasswodBox.Text.Equals(" ") || PasswodBox.Text.Equals("Password"))
             {
-
-                if (polaczenie.State == ConnectionState.Closed)
-                {
-                    polaczenie.Open();
-                    komenda.CommandText = string.Format("SELECT count(id) FROM register where Email='{0}'and Haslo='{1}'", EmailBox.Text, PasswodBox.Text);
-                    MessageBox.Show("Zaloowałeś sie poprawinie", "Informacja", MessageBoxButtons.OK);
-                    this.Hide();
-                    MainPanel NewPanel = new MainPanel();
-                    NewPanel.Show();
-                }
-
+                MessageBox.Show("Login or password is empty, or are the defaults", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            } else {
+                Polacznie();
             }
-            catch(Exception ex)
-            {
-	            string byk = string.Format("Problem z polaczniem \n{0}", ex.Message);
-                MessageBox.Show(byk, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-               
-            }
-            finally
-            {
-                if(polaczenie.State == ConnectionState.Open)
-                {
-                    polaczenie.Close();
-                }
-            }
-
             
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void EmailBox_Enter(object sender, EventArgs e)
         {
-
+            //jesli najdziemy na EmailBox --- bedzie puste pole
+            if (EmailBox.Text.Equals("Email"))
+            {
+                EmailBox.Text = "";
+            }
         }
 
-        private void textBox2_TextChanged(object sender, EventArgs e)
+        private void EmailBox_Leave(object sender, EventArgs e)
         {
-
+            //jesli opuscimy EmailBox --- bedzie napis Name
+            if (EmailBox.Text.Equals(""))
+            {
+                EmailBox.Text = "Email";
+            }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void PasswodBox_Enter(object sender, EventArgs e)
         {
+            if (PasswodBox.Text.Equals("Password"))
+            {
+                PasswodBox.Text = "";
+            }
+        }
 
+        private void PasswodBox_Leave(object sender, EventArgs e)
+        {
+            if (PasswodBox.Text.Equals(""))
+            {
+                PasswodBox.Text = "Password";
+            }
         }
     }
 }
