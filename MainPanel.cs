@@ -18,6 +18,7 @@ namespace PlayerMP3AndVideo
            SidePanel.Height = button1.Height;
            SidePanel.Top = button1.Top;
             musicPage1.BringToFront();
+            
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -27,8 +28,10 @@ namespace PlayerMP3AndVideo
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //czesc odpowiadajaca za poruszanie sie siePanel
            SidePanel.Height = button1.Height;
            SidePanel.Top = button1.Top;
+            //wez do przodu kontrolke uzytkownika: musicPage1
             musicPage1.BringToFront();
         }
 
@@ -39,6 +42,10 @@ namespace PlayerMP3AndVideo
             videoPage1.BringToFront();
         }
 
-       
+        private void MainPanel_Load(object sender, EventArgs e)
+        {
+            //wartosc loginu z logowania wstaw do userlabel
+            UserLabel.Text = LogPanel.Set_Name;
+        }
     }
 }

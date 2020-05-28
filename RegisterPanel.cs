@@ -11,11 +11,12 @@ using System.Data.Common;
 using System.Configuration;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
+using System.Security.Cryptography;
 
 namespace PlayerMP3AndVideo
 {
     
-    public partial class RegisterPanel : Form
+    public partial class RegisterPanel : Form 
     {
         
         public RegisterPanel()
@@ -25,24 +26,43 @@ namespace PlayerMP3AndVideo
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            //wylacznie aplikacji
+            //wylacznie aplikacji.
             System.Windows.Forms.Application.Exit();
+        }
+        public static string GetMd5Hash(MD5 md5Hash, string input)
+        {
+
+            // Konwertuje input (string) na tablice bitów i oblicz hash
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+
+            // Stworz nowy StringBuilder
+            StringBuilder sBuilder = new StringBuilder();
+
+            // Petla przez każdy bajt danych mieszaj i sformatujkazda jako ciag szesnastkowy.
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            //Zwraca ciąg szesnastkowy.
+            return sBuilder.ToString();
         }
 
         //dodatkowe parametry 
         string plec, wybor;
         void Rejestracja()
         {
-            //Polacznie z lokalna baza danych
+            //Polacznie z lokalna baza danych.
             MySqlConnection polaczenie = new MySqlConnection("server=localhost; user=root; database=user; port=3306; pooling=false");
             MySqlCommand komenda = polaczenie.CreateCommand();
+            MySqlCommand komenda1 = polaczenie.CreateCommand();
             try
             {
 
                 if (polaczenie.State == ConnectionState.Closed)
                 {
                     polaczenie.Open();
-                    //sprawdza radiobutona, aby muc wprowadzic plec uzytkownika
+                    //sprawdza radiobutona, aby muc wprowadzic plec uzytkownika.
                     if (radioButtonMale.Checked == true)
                     {
                         plec = "male";
@@ -51,7 +71,7 @@ namespace PlayerMP3AndVideo
                     {
                         plec = "female";
                     }
-                    //sprawdza ktore checboxy sa zaznaczone 
+                    //sprawdza ktore checboxy sa zaznaczone.
                     if (checkBox1.Checked == true && checkBox2.Checked == true && checkBox3.Checked == true && checkBox4.Checked == true)
                     {
                         wybor = "Rock,Pop,Metal,Other";
@@ -100,30 +120,49 @@ namespace PlayerMP3AndVideo
                     {
                         wybor = "Other";
                     }
-                    //komeda wstawiaajca dane z pol tekstowych
-                    komenda.CommandText = string.Format("INSERT INTO user1(Name,Surname,Email,Password,Music,Sex) VALUES('{0}','{1}','{2}','{3}','{4}','{5}')", NameBox.Text, SurnameBox.Text, EmailBox.Text, PasswordBox.Text, wybor, plec);
-                    //if sprawdzajacy czy komeda sie wykonala poprawnie --- czy zwrocila ilosc rzedow
-                    if (komenda.ExecuteNonQuery() == 1)
+                    string haslo = PasswordBox.Text;
+                    //hashowanie hasel.
+                    using (MD5 hash = MD5.Create())
                     {
-                        //komunkiat o poprawnym zajeztreowniu uzytkownika
-                        MessageBox.Show("You have logged successfuly", "Informacja", MessageBoxButtons.OK);
-                        //przejscie do panelu logownia
-                        this.Hide();
-                        LogPanel NewLogPanel = new LogPanel();
-                        NewLogPanel.Show();
+                        haslo = GetMd5Hash(hash, haslo);
                     }
+
+                    komenda1.CommandText = string.Format("SELECT count(id) FROM user1 where Login='" + LoginBox.Text + "'");
+                    int wartosc = Convert.ToInt32(komenda1.ExecuteScalar());
+                    if(wartosc == 1)
+                    {
+                        MessageBox.Show(String.Format("Login: {0}, already exists.",LoginBox.Text), "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    } else
+                    {
+                        //komeda wstawiaajca dane z pol tekstowych.
+                        komenda.CommandText = string.Format("INSERT INTO user1(Name,Surname,Login,Password,Music,Sex) VALUES('{0}','{1}','{2}','{3}','{4}','{5}')", NameBox.Text, SurnameBox.Text, LoginBox.Text, haslo, wybor, plec);
+                        //if sprawdzajacy czy komeda sie wykonala poprawnie --- czy zwrocila ilosc rzedow.
+                        if (komenda.ExecuteNonQuery() == 1)
+                        {
+                            //komunkiat o poprawnym zajestestrowaniu uzytkownika.
+                            MessageBox.Show("You have logged successfuly.", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            //przejscie do panelu logownia
+                            this.Hide();
+                            LogPanel NewLogPanel = new LogPanel();
+                            NewLogPanel.Show();
+                        } else {
+                            MessageBox.Show("Login Error.", "Informacja", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    NameBox.Clear(); SurnameBox.Clear();LoginBox.Clear();PasswordBox.Clear();NameBox.Focus();
+                    
                 }
 
             }
             catch (Exception ex)
             {
-                string byk = string.Format("Problem podczas rejestracji uzytkwonika \n{0}", ex.Message);
+                string byk = string.Format("Problem registering user: \n{0}.", ex.Message);
                 MessageBox.Show(byk, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
             finally
             {
-                //jesli polaczenie jest otwarte, to zamnknij
+                //jesli polaczenie jest otwarte, to zamnknij.
                 if (polaczenie.State == ConnectionState.Open)
                 {
                     polaczenie.Close();
@@ -132,13 +171,17 @@ namespace PlayerMP3AndVideo
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            //if ktory sprawdza czy pola (email,pass,surname,name) sa puste, sprawdza tez czy uzytkownik podal plec, jesli wszsytko jest prawidlowe uruchamia funkcje Rejestracja()
-            if (EmailBox.Text.Equals(" ") || EmailBox.Text.Equals("Email") || PasswordBox.Text.Equals(" ")  || PasswordBox.Text.Equals("Password") || SurnameBox.Text.Equals(" ") || SurnameBox.Text.Equals("Surname") || NameBox.Text.Equals(" ") || NameBox.Text.Equals("Name"))
+            //if ktory sprawdza czy pola (email,pass,surname,name) sa puste, sprawdza tez czy uzytkownik podal plec, jesli wszsytko jest prawidlowe uruchamia funkcje Rejestracja().
+            if (LoginBox.Text.Equals("") || LoginBox.Text.Equals("Login") || PasswordBox.Text.Equals("")  || PasswordBox.Text.Equals("Password") || SurnameBox.Text.Equals("") || SurnameBox.Text.Equals("Surname") || NameBox.Text.Equals("") || NameBox.Text.Equals("Name"))
             {
-                MessageBox.Show("Yours data are empty", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Yours data are empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             } else if (radioButtonfemale.Checked == false && radioButtonMale.Checked == false)
             {
-                MessageBox.Show("Select gender", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Select gender.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if(LoginBox.TextLength < 5)
+            {
+                MessageBox.Show("Password must be at least 5 characters", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -148,7 +191,7 @@ namespace PlayerMP3AndVideo
 
         private void NameBox_Enter(object sender, EventArgs e)
         {
-            //jesli najdziemy na NameBox --- bedzie puste pole
+            //jesli najdziemy na NameBox --- bedzie puste pole.
             if (NameBox.Text.Equals("Name"))
             {
                 NameBox.Text = "";
@@ -157,7 +200,7 @@ namespace PlayerMP3AndVideo
 
         private void NameBox_Leave(object sender, EventArgs e)
         {
-            //jesli opuscimy NameBox --- bedzie napis Name
+            //jesli opuscimy NameBox --- bedzie napis Name.
             if (NameBox.Text.Equals(""))
             {
                 NameBox.Text = "Name";
@@ -182,17 +225,17 @@ namespace PlayerMP3AndVideo
 
         private void EmailBox_Enter(object sender, EventArgs e)
         {
-            if (EmailBox.Text.Equals("Email"))
+            if (LoginBox.Text.Equals("Login"))
             {
-                EmailBox.Text = "";
+                LoginBox.Text = "";
             }
         }
 
         private void EmailBox_Leave(object sender, EventArgs e)
         {
-            if (EmailBox.Text.Equals(""))
+            if (LoginBox.Text.Equals(""))
             {
-                EmailBox.Text = "Email";
+                LoginBox.Text = "Login";
             }
         }
 
@@ -211,6 +254,5 @@ namespace PlayerMP3AndVideo
                 PasswordBox.Text = "Password";
             }
         }
-
     }
 }
