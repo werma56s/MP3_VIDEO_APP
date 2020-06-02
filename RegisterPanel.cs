@@ -181,6 +181,10 @@ namespace PlayerMP3AndVideo
             }
             else if(LoginBox.TextLength < 5)
             {
+                MessageBox.Show("Login must be at least 5 characters", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else if (PasswordBox.TextLength < 5)
+            {
                 MessageBox.Show("Password must be at least 5 characters", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else

@@ -103,6 +103,7 @@ namespace PlayerMP3AndVideo
             //czyszczenie tablicy z wykazem piosenek i ListyViedo
             Array.Clear(path,0,path.Length);
             ListMusic.Items.Clear();
+            axWindowsMediaPlayer1.Ctlcontrols.pause();
         }
 
         private void MusicPage_Load(object sender, EventArgs e)

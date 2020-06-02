@@ -76,7 +76,7 @@ namespace PlayerMP3AndVideo
         {
             //Polacznie z lokalna baza danych.
             MySqlConnection polaczenie = new MySqlConnection("server=localhost; user=root; database=user; port=3306; pooling=false");
-            //Stworznie komedy wyszykujacej email i haslo uzytkownika
+            //Stworznie komedy wyszykujacej login i haslo uzytkownika
             MySqlDataAdapter komenda = new MySqlDataAdapter("SELECT count(id) FROM user1 where Login='" + LoginBox.Text + "'", polaczenie);
             try
             {
@@ -109,8 +109,8 @@ namespace PlayerMP3AndVideo
                         NewPanel.Show();
                     }else
                     {
-                        //Error gdy wpiszemy zle email lub haslo
-                        MessageBox.Show("Either your Login is incorrect.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //Error gdy wpiszemy zle login lub haslo
+                        MessageBox.Show("Either your Password is incorrect.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         //czysci pola tesktowe
                         LoginBox.Clear();
                         PasswodBox.Clear();
@@ -168,7 +168,7 @@ namespace PlayerMP3AndVideo
                 }
                 else
                 {
-                    //Error gdy wpiszemy zle email lub haslo
+                    //Error gdy wpiszemy zly login lub haslo
                     MessageBox.Show("Either your Login or password is incorrect.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     //czysci pola tesktowe
                     LoginBox.Clear();
@@ -195,7 +195,7 @@ namespace PlayerMP3AndVideo
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //if ktory sprawdza czy pola(email, haslo) sa puste lib wartosic domyslne.
+            //if ktory sprawdza czy pola(login, haslo) sa puste lub wartosic domyslne.
             if (LoginBox.Text.Equals(" ") || LoginBox.Text.Equals("Email") || PasswodBox.Text.Equals(" ") || PasswodBox.Text.Equals("Password"))
             {
                 MessageBox.Show("Login or password is empty, or are the defaults.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
