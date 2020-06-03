@@ -22,11 +22,16 @@ namespace PlayerMP3AndVideo
             WindowsMediaPlayer1.Ctlcontrols.fastReverse();
             WindowsMediaPlayer1.Ctlcontrols.stop();
         }
-       
 
-        private void button1_Click_1(object sender, EventArgs e)
+        /// <summary>
+        /// Głowna funkcja odtwarzajaca film w aplikacji..
+        /// </summary>
+        /// <returns>
+        /// Funkcja Video() otwiera standardowe okno dialogowe, które informuje, aby użytkownik wybrał interesujący go plik.
+        /// Tworzy playlistę plików filmowych.
+        /// </returns>
+        void Video()
         {
-
             using (OpenFileDialog ofd = new OpenFileDialog() { Multiselect = true, ValidateNames = true, Filter = "WMV|*.wmv|WAV|*.wav|MP3|*.mp3|MP4|*.mp4|MKV|*.mkv" })
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
@@ -41,6 +46,10 @@ namespace PlayerMP3AndVideo
                     ListVideo.DataSource = files;
                 }
             }
+        }
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            Video();      
         }
         private void ListVideo_SelectedIndexChanged_1(object sender, EventArgs e)
           {

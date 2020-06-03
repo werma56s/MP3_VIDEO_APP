@@ -21,8 +21,26 @@ namespace PlayerMP3AndVideo
         {
             InitializeComponent();    
         }
-
+        /// <summary>
+        /// <param name="Set_Name"> Pole zapisujące nazwę użytkownika. Wartość wyświetlana w menu głównym aplikacji (MainPanel). </param>
+        /// </summary>
         public static string Set_Name="";
+
+        /// <summary>
+        /// Głowna funkcja zabezpieczająca hasło użytkownika.
+        /// </summary>
+        /// <param name="md5Hash"> Przekazujemy wcześniej utworzony MD5.</param>
+        /// <param name="input"> Przekazujemy "input", czyli wartość wprowadzona przez użytkownika jako hasło.</param>
+        /// <returns>
+        /// Funkcja GetMd5Hash() odpowiada za konwersje danych wejściowych na bity i zwrócenie jako ciąg szesnastkowy.
+        /// </returns>
+        /// <example>
+        /// <code>
+        /// MD5 md5Hash = MD5.Create();
+        /// string input = "Hello World!";
+        /// string result = GetMd5Hash(md5Hash, input);
+        /// </code>
+        /// </example>
         public static string GetMd5Hash(MD5 md5Hash, string input)
         {
 
@@ -41,8 +59,23 @@ namespace PlayerMP3AndVideo
             //Zwraca ciąg szesnastkowy.
             return sBuilder.ToString();
         }
-
-        //Sprawdza skrót względem łańcucha.
+        /// <summary>
+        /// Główna funkcja zwracająca skrót  względem łańcucha.
+        /// </summary>
+        /// <param name="md5Hash"> Przekazujemy wcześniej utworzony MD5.</param>
+        /// <param name="input"> Przekazujemy "input", czyli wartość wprowadzona przez użytkownika jako hasło.</param>
+        /// <param name="hash"> Wynik funkcji GetMd5Hash().</param>
+        /// <returns>
+        /// Funkcja GetMd5Hash() odpowiada za konwersje danych wejściowych na bity i zwrócenie jako ciąg szesnastkowy.
+        /// </returns>
+        /// <example>
+        /// <code>
+        /// MD5 md5Hash = MD5.Create();
+        /// string input = "Hello World!";
+        /// string hash = GetMd5Hash(md5Hash, input);
+        /// VerifyMd5Hash(md5Hash, input, hash);
+        /// </code>
+        /// </example>
         public static bool VerifyMd5Hash(MD5 md5Hash, string input, string hash)
         {
             // Hash wejściowy.
@@ -72,6 +105,14 @@ namespace PlayerMP3AndVideo
 
 
         }
+
+        /// <summary>
+        /// Głowna funkcja logujaca użytkownika.
+        /// </summary>
+        /// <returns>
+        /// Funkcja Polacznie1() odpowiada za połaczenie z baza danych, sprawdzenie czy podany login istnieje,
+        /// weryfikacje hasła wprowadzonego i hasła z bazy danych.
+        /// </returns>
         void Polacznie1()
         {
             //Polacznie z lokalna baza danych.
@@ -143,55 +184,7 @@ namespace PlayerMP3AndVideo
                     polaczenie.Close();
                 }
             }
-        }
-        void Polacznie()
-        {
-            //Polacznie z lokalna baza danych.
-            MySqlConnection polaczenie = new MySqlConnection("server=localhost; user=root; database=user; port=3306; pooling=false");
-            //Stworznie komedy wyszykujacej email i haslo uzytkownika
-            MySqlDataAdapter komenda = new MySqlDataAdapter("SELECT count(*) FROM user1 where Email='" + LoginBox.Text + "'and Password='" + PasswodBox.Text + "'", polaczenie);
-            try
-            {
-                //Stworzenie nowego obiektu DataTable
-                DataTable dt = new DataTable();
-                //metody Fill pozwala załadować dane (z komedy) do obiektów DataTable
-                komenda.Fill(dt);
-                //if sprawdza czy zwraca dokladnie 1
-                if (dt.Rows[0][0].ToString() == "1")
-                {
-                    //komunkiat o poprawnym zajeztreowniu uzytkownika
-                    MessageBox.Show("Login Succes.", "Congrates", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //przejscie do panelu uzytkownika
-                    this.Hide();
-                    MainPanel NewPanel = new MainPanel();
-                    NewPanel.Show();
-                }
-                else
-                {
-                    //Error gdy wpiszemy zly login lub haslo
-                    MessageBox.Show("Either your Login or password is incorrect.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    //czysci pola tesktowe
-                    LoginBox.Clear();
-                    PasswodBox.Clear();
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                string byk = string.Format("Problem registering user: \n{0}.", ex.Message);
-                MessageBox.Show(byk, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            }
-            finally
-            {
-                //jesli polaczenie jest otwarte, to zamnknij.
-                if (polaczenie.State == ConnectionState.Open)
-                {
-                    polaczenie.Close();
-                }
-            }
-        }
+        }   
 
         private void button1_Click(object sender, EventArgs e)
         {

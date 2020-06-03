@@ -26,9 +26,23 @@ namespace PlayerMP3AndVideo
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            //wylacznie aplikacji.
             System.Windows.Forms.Application.Exit();
         }
+        /// <summary>
+        /// Głowna funkcja zabezpieczająca hasło użytkownika.
+        /// </summary>
+        /// <param name="md5Hash"> Przekazujemy wcześniej utworzony MD5.</param>
+        /// <param name="input"> Przekazujemy "input" czyli wartość wprowadzona przez użytkownika jako hasło.</param>
+        /// <returns>
+        /// Funkcja GetMd5Hash() odpowiada za konwersje danych wejściowych na bity i zwrócenie jako ciąg szesnastkowy.
+        /// </returns>
+        /// <example>
+        /// <code>
+        /// MD5 md5Hash = MD5.Create();
+        /// string input = "Hello World!";
+        /// string result = GetMd5Hash(md5Hash, input);
+        /// </code>
+        /// </example>
         public static string GetMd5Hash(MD5 md5Hash, string input)
         {
 
@@ -47,12 +61,19 @@ namespace PlayerMP3AndVideo
             //Zwraca ciąg szesnastkowy.
             return sBuilder.ToString();
         }
-
-        //dodatkowe parametry 
+        
         string plec, wybor;
+
+        /// <summary>
+        /// Głowna funkcja rejestrująca użytkownika.
+        /// </summary>
+        /// <returns>
+        /// Funkcja Rejestracja() odpowiada za połączenie z bazą danych, zabezpieczenie hasła wprowadzonego przez użytkownika,
+        /// a także przesłania danych do bazy danych.
+        /// </returns>
         void Rejestracja()
         {
-            //Polacznie z lokalna baza danych.
+            //Połączenie z lokalną bazą danych.
             MySqlConnection polaczenie = new MySqlConnection("server=localhost; user=root; database=user; port=3306; pooling=false");
             MySqlCommand komenda = polaczenie.CreateCommand();
             MySqlCommand komenda1 = polaczenie.CreateCommand();
@@ -62,7 +83,7 @@ namespace PlayerMP3AndVideo
                 if (polaczenie.State == ConnectionState.Closed)
                 {
                     polaczenie.Open();
-                    //sprawdza radiobutona, aby muc wprowadzic plec uzytkownika.
+                    //Sprawdza radiobutona, aby moc wprowadzić płeć użytkownika.
                     if (radioButtonMale.Checked == true)
                     {
                         plec = "male";
@@ -71,7 +92,7 @@ namespace PlayerMP3AndVideo
                     {
                         plec = "female";
                     }
-                    //sprawdza ktore checboxy sa zaznaczone.
+                    //Sprawdza które checboxy sa zaznaczone.
                     if (checkBox1.Checked == true && checkBox2.Checked == true && checkBox3.Checked == true && checkBox4.Checked == true)
                     {
                         wybor = "Rock,Pop,Metal,Other";
@@ -169,6 +190,7 @@ namespace PlayerMP3AndVideo
                 }
             }
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             //if ktory sprawdza czy pola (email,pass,surname,name) sa puste, sprawdza tez czy uzytkownik podal plec, jesli wszsytko jest prawidlowe uruchamia funkcje Rejestracja().

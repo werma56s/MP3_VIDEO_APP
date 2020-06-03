@@ -20,8 +20,14 @@ namespace PlayerMP3AndVideo
             InitializeComponent();
 
         }
-        string[] files, path; 
-        void music()
+        string[] files, path;
+        /// <summary>
+        /// Głowna funkcja tworzaca playliste.
+        /// </summary>
+        /// <returns>
+        /// Funkcja Music() tworzy playliste piosenek.
+        /// </returns>
+        void Music()
         {
             //nowa playlista w windows media player
             var myPlayList = axWindowsMediaPlayer1.playlistCollection.newPlaylist("MyPlayList");
@@ -54,7 +60,7 @@ namespace PlayerMP3AndVideo
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            music();
+            Music();
         }
         
         private void pictureBox3_Click(object sender, EventArgs e)
