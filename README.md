@@ -8,7 +8,7 @@ id(int,PRIMARY KEY,AUTO_INCREMENT), Name(varchar), Surname(varchar),
  Login(varchar), Password(varchar), Music(varchar), Sex(varchar).
  Można także importować plik "user.sql" na serwer. 
 
-Polecam: XAMPP(ApacheE,MySQL) ---> 127.0.0.1 Wpisac w przegldarke --> 
+Polecam: XAMPP(ApacheE,MySQL) ---> 127.0.0.1 Wpisac w przegladarke --> 
 importuj ---> wybrac plik "user.sql" ---> Wykonaj.
 
 _____________________________________________________________________________
